@@ -1,4 +1,4 @@
-import os
+import os,hashlib
 print("Hello")
 def init(repo):
     os.mkdir(repo)
@@ -11,4 +11,18 @@ def init(repo):
 
     print('initialized empty repository: {}'.format(repo))
 
-init("Abb")
+def hash_object(data,obj_type,write = True):
+    header = '{} {}'.format(obj_type,len(data)).encode()
+    full_data = header + b'\x00' + data
+    sha1 = hashlib.sha1(full_data).hexdigest()
+    if write:
+        path = os.path.join('.git','objects',sha1[:2],sha1[2:])
+        if not os.path.exists(path):
+            os.makedirs(os.path.dirname(path),exist_ok = True)
+            # write_file(path,zlib.compress(full_data))
+    return sha1
+
+# init("Abbas")
+file_content = "My name is Abbas Bhai"
+temp = hash_object(file_content.encode(), 'blob', write=False)
+print(temp)
